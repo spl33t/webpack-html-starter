@@ -1,28 +1,22 @@
-var path = require('path');
-var fs = require('fs');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const { getFilePathsRecursive, htmlPluginCreate } = require("./webpack-utils/html-plugin-lib")
 
-// Look for .html files
-const htmlFiles = [];
-const directories = ['src'];
-while (directories.length > 0) {
-  var directory = directories.pop();
-  var dirContents = fs.readdirSync(directory)
-    .map(file => path.join(directory, file));
-
-  htmlFiles.push(...dirContents.filter(file => file.endsWith('.html')));
-  directories.push(...dirContents.filter(file => fs.statSync(file).isDirectory()));
-}
+const viewsFiles = getFilePathsRecursive('src/views', ['.js', '.html'])
 
 module.exports = {
   mode: 'development',
-  entry: './src/index.js',
+  entry: {
+    ...htmlPluginCreate(viewsFiles, './src/index.js').jsChunks
+  },
   output: {
     path: __dirname + '/dist',
     clean: true
   },
   module: {
     rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
       {
         test: /\.html$/i,
         loader: "html-loader",
@@ -53,17 +47,13 @@ module.exports = {
           },
         },
       },
-      
+      {
+        resourceQuery: /raw/,
+        type: 'asset/source',
+      }
     ]
   },
   plugins: [
-
-    ...htmlFiles.map(htmlFile =>
-      new HtmlWebpackPlugin({
-        template: htmlFile,
-        filename: htmlFile.replace(path.normalize("src/"), ""),
-        inject: true
-      })
-    )
+    ...htmlPluginCreate(viewsFiles).htmlPlugins
   ],
 };
