@@ -1,2 +1,2 @@
 import "./index.css"
-console.log('hello world')
+console.log('home page')

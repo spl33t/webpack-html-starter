@@ -1,2 +1,8 @@
 import "./index.css"
-console.log('hello world')
+import { hello } from "./scripts/hello"
+import { calculate } from "./scripts/calculate"
+
+console.log('about page')
+
+hello("Maxim")
+console.log(calculate(2, 8, "-"))

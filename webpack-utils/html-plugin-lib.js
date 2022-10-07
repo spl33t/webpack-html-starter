@@ -10,12 +10,11 @@ const htmlPluginCreate = (viewsFiles, indexJsPath = '') => {
     jsChunks[ROOT_JS_CHUNK_NAME] = indexJsPath
 
   viewsFiles.forEach(filePath => {
-    if (filePath.endsWith('.js')) {
+    if (filePath.endsWith('index.js')) {
       const parts = filePath.split('\\')
       jsChunks[parts[parts.length - 2]] = "./" + path.normalize(filePath)
     }
   })
-
 
   const htmlPlugins = []
   viewsFiles.forEach(filePath => {
