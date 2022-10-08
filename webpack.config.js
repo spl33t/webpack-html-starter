@@ -5,6 +5,8 @@ const DIST_PATH = path.resolve(__dirname, 'dist');
 
 const viewsFiles = getFilePathsRecursive('src/views', ['.js', '.html'])
 
+console.log(htmlPluginCreate(viewsFiles, './src/index.js').jsChunks)
+
 module.exports = {
   mode: 'development',
   entry: {
