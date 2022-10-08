@@ -1,18 +1,15 @@
 const path = require('path');
 const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { ENTRY_ROOT } = require("../constants");
 
-const htmlPluginCreate = (viewsFiles, indexJsPath = '') => {
-  const ROOT_JS_CHUNK_NAME = "_root"
-  const jsChunks = {}
-
-  if (indexJsPath)
-    jsChunks[ROOT_JS_CHUNK_NAME] = indexJsPath
+const htmlPluginCreate = (viewsFiles) => {
+  const htmlJsChunks = {}
 
   viewsFiles.forEach(filePath => {
     if (filePath.endsWith('index.js')) {
       const parts = filePath.split('\\')
-      jsChunks[parts[parts.length - 2]] = "./" + path.normalize(filePath)
+      htmlJsChunks[parts[parts.length - 2]] = path.normalize(filePath)
     }
   })
 
@@ -25,21 +22,21 @@ const htmlPluginCreate = (viewsFiles, indexJsPath = '') => {
       htmlPlugins.push(
         new HtmlWebpackPlugin({
           template: filePath,
-          filename: filePath.replace(path.normalize("src/"), ""),
+          filename: path.relative(path.resolve('./src'), filePath) ,
           inject: true,
-          chunks: [ROOT_JS_CHUNK_NAME, pageName],
-
+          chunks: [ENTRY_ROOT.name, pageName],
         }))
     }
   })
 
   return {
-    jsChunks,
+    htmlJsChunks,
     htmlPlugins
   }
 }
 
 const getFilePathsRecursive = (viewsPath, fileExtension) => {
+
   const filePaths = []
 
   const getPath = (viewsPath, fileExtension) => {

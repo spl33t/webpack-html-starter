@@ -1,8 +1,9 @@
 ## Todo:
-- .env  variables support
-- html preprocessor
-- jQuery support
-- type-script support
+- [ ] .env  variables support
+- [ ] html preprocessor
+- [x] jQuery support
+- [ ] type-script support
+- [ ] production config implementation
 
 ## Scripts available
 - Development mode start `npm run dev`

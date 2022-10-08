@@ -1,16 +1,20 @@
 const path = require("path");
-const { getFilePathsRecursive, htmlPluginCreate } = require("./webpack-utils/html-plugin-lib")
+const { getFilePathsRecursive, htmlPluginCreate } = require("./utils/html-plugin-lib")
+const CreateFileWebpack = require('create-file-webpack')
+const { INDEX_PAGE_FOLDER_NAME, ENTRY_ROOT, DIST_PATH, VIEWS_PATH } = require("./constants");
+const webpack = require("webpack");
+const fs = require("fs");
 
-const DIST_PATH = path.resolve(__dirname, 'dist');
+const viewsFiles = getFilePathsRecursive(VIEWS_PATH, ['.js', '.html'])
+const { htmlJsChunks, htmlPlugins } = htmlPluginCreate(viewsFiles)
 
-const viewsFiles = getFilePathsRecursive('src/views', ['.js', '.html'])
-
-console.log(htmlPluginCreate(viewsFiles, './src/index.js').jsChunks)
+console.log(VIEWS_PATH)
 
 module.exports = {
-  mode: 'development',
+  /*mode: 'development',*/
   entry: {
-    ...htmlPluginCreate(viewsFiles, './src/index.js').jsChunks
+    [ENTRY_ROOT.name]: ENTRY_ROOT.path,
+    ...htmlJsChunks,
   },
   output: {
     path: DIST_PATH,
@@ -18,13 +22,12 @@ module.exports = {
     clean: true,
   },
   devServer: {
-    port: 8080,
-    static: './dist',
+    static: DIST_PATH,
     hot: false,
     liveReload: true,
     open: true,
-    port: process.env.PORT || 3420,
-    host: process.env.HOST || 'localhost',
+    port: process.env.DEV_SERVER_PORT || 3420,
+    host: process.env.DEV_SERVER_HOST || 'localhost',
   },
   module: {
     rules: [
@@ -97,10 +100,21 @@ module.exports = {
     ]
   },
   plugins: [
-    ...htmlPluginCreate(viewsFiles).htmlPlugins,
+    ...htmlPlugins,
+    new CreateFileWebpack({
+      path: DIST_PATH,
+      fileName: 'index.html',
+      content: `<meta http-equiv="Refresh" content="0; url='./views/${INDEX_PAGE_FOLDER_NAME}/index.html'" />`
+    }),
+
+    new webpack.ProvidePlugin({
+      $: "jquery/dist/jquery.min.js",
+      jQuery: "jquery/dist/jquery.min.js",
+      "window.jQuery": "jquery/dist/jquery.min.js"
+    })
   ],
   //TODO: replace  to prod config
-    optimization: {
+  /*  optimization: {
       minimize: true,
-    }
+    }*/
 };
