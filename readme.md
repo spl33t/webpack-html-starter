@@ -1,7 +1,7 @@
 ## Todo:
 - .env  variables support
 - html preprocessor
-- jquey support
+- jQuery support
 - type-script support
 
 ## Scripts available
