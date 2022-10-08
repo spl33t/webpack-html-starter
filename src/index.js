@@ -1,3 +1,4 @@
-import "./index.css"
+import "./index.scss"
 
 console.log(document)
+console.log('hello world')

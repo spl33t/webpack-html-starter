@@ -1,4 +1,4 @@
-import "./index.css"
+import "./index.scss"
 import { hello } from "./scripts/hello"
 import { calculate } from "./scripts/calculate"
 

@@ -3,7 +3,7 @@ const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const htmlPluginCreate = (viewsFiles, indexJsPath = '') => {
-  const ROOT_JS_CHUNK_NAME = "rootJs"
+  const ROOT_JS_CHUNK_NAME = "_root"
   const jsChunks = {}
 
   if (indexJsPath)
@@ -46,12 +46,11 @@ const getFilePathsRecursive = (viewsPath, fileExtension) => {
     const dirContents = fs.readdirSync(viewsPath)
       .map(file => path.join(viewsPath, file))
 
+    filePaths.push(...dirContents.filter(file => file.endsWith(fileExtension)))
+
     dirContents.forEach(file => {
       if (fs.statSync(file).isDirectory()) {
         return getPath(file, fileExtension)
-      }
-      if (file.endsWith(fileExtension)) {
-        filePaths.push(file)
       }
     })
   }
@@ -63,7 +62,6 @@ const getFilePathsRecursive = (viewsPath, fileExtension) => {
   } else {
     getPath(viewsPath, fileExtension)
   }
-
 
   return filePaths
 }
